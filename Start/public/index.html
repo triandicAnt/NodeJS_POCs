@@ -1,0 +1,25 @@
+<html>
+	<head>
+		<title>Tweeto</title>
+		<script src="javascripts/angular.min.js"></script>
+		<script src="javascripts/angular-route.js"></script> <!-- for routing -->
+		<script src="javascripts/tweetApp.js"></script>
+		<link rel="stylesheet" href="stylesheets/bootstrap.min.css">
+		<link rel="stylesheet" href="stylesheets/style.css">
+	</head>
+	<body ng-app="tweetApp">
+		<div id='main' class="container">
+            <nav class="navbar navbar-light navbar-fixed-top" style="background-color: #e3f2fd;">
+                <div class="container">
+                    <a class="navbar-brand" href="#"> Tweeto! </a>
+                    <p class="navbar-text"> Tweet from Tweeto!</p>
+                    <p class="navbar-right navbar-text"><a href="#/login">Login</a> or <a href="#/register">Register</a></p>
+                </div>
+            </nav>
+			<div class = "col-md-offset-2 col-md-8">
+                <div ng-view>
+                </div>
+			</div>
+		</div>
+	</body>
+</html>

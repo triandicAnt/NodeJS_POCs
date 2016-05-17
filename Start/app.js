@@ -5,14 +5,15 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var api = require('./routes/api');
-
 var passport = require('passport');
-
-
-var authenticate = require('./routes/authenticate');
-
+//initialize mongoose schemas
+require('./models/models');
+var api = require('./routes/api');
+var authenticate = require('./routes/authenticate')(passport);
+var mongoose = require('mongoose');                         //add for Mongo support
+mongoose.connect('mongodb://localhost/test-tweeto');              //connect to Mongo
 var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
