@@ -1,8 +1,8 @@
 <!-- partial main file -->
 
 <div class="clearfix">
-    <form ng-submit="post()">
-        <input required type="text" placeholder="Name!" ng-model="newPost.created_by" />
+    <form ng-submit="post()" ng-show="authenticated">
+        <h4>{{current_user}} says</h4>
         <textarea required class = "form-control" maxlength="200" rows="3" placeholder="Tweet something!" ng-model="newPost.text"></textarea>
         <input class="btn submit-btn pull-right" type="submit" value="Tweet!" />
     </form>
