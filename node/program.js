@@ -1,8 +1,11 @@
 var fs = require('fs')
 var path = require('path');
+
+var http = require('http');
+var bl = require('bl');
+/*
 var content;
 var count = undefined;
-
 var myModule = require('./mymodule');
 // var file = process.argv[2];
 
@@ -75,3 +78,51 @@ function myCallback(err,list){
 }
 
 */
+
+// HTTP request and response
+var array = [];
+function getDataFromUrl(url){
+    http.get(url,function callback(response){
+        response.on("error", function(data){
+            console.log("Something bad happened");
+        });
+        /*response.on("data", function(data){
+            console.log('1');
+            array.push(data.toString());
+            // var array = data.toString().split('\n');
+            // array.forEach(function(line){
+            // console.log(line);
+            });
+       
+        response.on("end", function(error){
+            if(error){
+                throw error;
+            }
+            console.log('2');
+            // console.log(array);
+            var completeString = '';
+            array.forEach(function(line){
+                console.log(line);
+                completeString.concat(line);
+            });
+            // for (s in array){
+            //     console.log(s);
+            //     // completeString+=s;
+            // }
+            // console.log(completeString.length);
+            console.log(completeString);
+        
+        });*/
+        response.pipe(bl(function (err, data) {
+            if(err){
+                throw err;
+            }
+             console.log(data.toString().length);
+              console.log(data.toString());
+            }));
+    });
+};
+var url = process.argv[2];
+// var url = 'http://www.google.com/index.html';
+
+ getDataFromUrl(url);
