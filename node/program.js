@@ -4,6 +4,7 @@ var path = require('path');
 var http = require('http');
 var bl = require('bl');
 var net = require('net');
+var map = require('through2-map');
 
 /*
 var content;
@@ -164,7 +165,7 @@ function createTCPConnection(port){
 };
 var port = process.argv[2];
 createTCPConnection(port);
-*/
+
 
 // HTTP server
 
@@ -179,3 +180,21 @@ var port = process.argv[2];
 var filename = process.argv[3];
 createHttpServer(port,filename);
 
+Write an HTTP server that receives only POST requests and converts  
+incoming POST body characters to upper-case and returns it to the client.
+*/
+
+function createHttpServer(port){
+   var server =  http.createServer(function callback(req,res){
+        if (req.method == 'POST') {
+            res.writeHead(200, { 'content-type': 'text/plain' });
+            req.pipe(map(function (chunk) {  
+                return chunk.toString().toUpperCase().split('').join('')  
+            })).pipe(res)
+        }
+       
+    });
+    server.listen(port);
+};
+var port = process.argv[2];
+createHttpServer(port);
