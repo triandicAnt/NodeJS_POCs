@@ -148,7 +148,7 @@ for (var i = 0; i < 3; i++ ) {
         });
     })(i); 
 }
-*/
+
 
 //TCP Connection
 
@@ -164,3 +164,18 @@ function createTCPConnection(port){
 };
 var port = process.argv[2];
 createTCPConnection(port);
+*/
+
+// HTTP server
+
+function createHttpServer(port, filename){
+   var server =  http.createServer(function callback(req,res){
+        res.writeHead(200, { 'content-type': 'text/plain' })
+        fs.createReadStream(filename).pipe(res);
+    });
+    server.listen(port);
+};
+var port = process.argv[2];
+var filename = process.argv[3];
+createHttpServer(port,filename);
+
