@@ -3,6 +3,8 @@ var path = require('path');
 
 var http = require('http');
 var bl = require('bl');
+var net = require('net');
+
 /*
 var content;
 var count = undefined;
@@ -126,7 +128,7 @@ var url = process.argv[2];
 // var url = 'http://www.google.com/index.html';
 
  getDataFromUrl(url);
-*/
+
 var content = [];
 var counter = 3;
 for (var i = 0; i < 3; i++ ) {
@@ -146,3 +148,19 @@ for (var i = 0; i < 3; i++ ) {
         });
     })(i); 
 }
+*/
+
+//TCP Connection
+
+function createTCPConnection(port){
+    var server = net.createServer(function listener(socket){
+        var date = new Date();
+        var strftime = require('strftime')
+        socket.write(strftime('%F %R', date));
+        socket.write('\n');
+        socket.end();
+    });
+    server.listen(port);
+};
+var port = process.argv[2];
+createTCPConnection(port);
