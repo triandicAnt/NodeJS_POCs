@@ -182,7 +182,7 @@ createHttpServer(port,filename);
 
 Write an HTTP server that receives only POST requests and converts  
 incoming POST body characters to upper-case and returns it to the client.
-*/
+
 
 function createHttpServer(port){
    var server =  http.createServer(function callback(req,res){
@@ -198,3 +198,33 @@ function createHttpServer(port){
 };
 var port = process.argv[2];
 createHttpServer(port);
+
+*/
+var url = require('url');
+var port = process.argv[2];
+var server =  http.createServer(function callback(req,res){
+    if (req.method == 'GET') {
+            var parsedUrl = url.parse(req.url, true);
+            var parseTime = '/api/parsetime';
+            var unixTime = '/api/unixtime';
+            if (parsedUrl.pathname === parseTime) {
+                var query = parsedUrl.query;
+                var date1 = new Date(query.iso);
+                var unixTimePayload = {
+                     "hour": date1.getHours(),  
+                     "minute": date1.getMinutes(),  
+                     "second": date1.getSeconds()  
+                };
+                
+                res.end(JSON.stringify(unixTimePayload));
+            } else if (parsedUrl.pathname === unixTime) {
+                    var query = parsedUrl.query;
+                var date1 = new Date(query.iso);
+                var unixTimeValue = {
+                     "unixtime": date1.getTime()
+                };    
+                res.end(JSON.stringify(unixTimeValue));         
+            }           
+    }
+});
+server.listen(port);
