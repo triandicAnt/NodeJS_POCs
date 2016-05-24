@@ -3,7 +3,7 @@ var count = 1;
 function autoIncrement(){
     return count+1;
 }    
-/*
+
 var split = require('split');
     process.stdin
         .pipe(split())
@@ -20,4 +20,3 @@ var split = require('split');
         }))
     ;
 
-*/
