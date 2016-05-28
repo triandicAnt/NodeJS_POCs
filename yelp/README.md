@@ -159,3 +159,8 @@ newBusiness.save(function(err) {
         }
     });
 ```
+The collection object will look like the following:
+
+![alt tag](https://github.com/sudhansusingh22/soMEAN/blob/master/yelp/yelp_collection.png)
+
+
