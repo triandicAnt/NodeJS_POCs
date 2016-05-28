@@ -34,12 +34,18 @@ function searchText(apiKey, format){
 
 var searchText = new searchText(apiKey,format);
 var parameters = {
-        query: "restaurants in raleigh"
+        query: "restaurants in Raleigh"
 };
 
 searchText(parameters, function (error, response) {
     if (error) throw error;
-    console.log(response.results);
+    // console.log(response.results);
+    var len = response.results.length;
+    var places_id = [];
+    for(var i =0; i<len;i++){
+        places_id.push(response.results[i].place_id);
+    }
+    console.log(places_id);
 });
 
 // textSearch();
