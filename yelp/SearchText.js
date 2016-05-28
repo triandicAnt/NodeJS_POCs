@@ -10,6 +10,7 @@ var querystring = require('querystring');
 var https = require('https');
 var module = require('./httpModule');
 
+
 apiKey = "AIzaSyDiBagxn8ZbGxxG25JYu8c-THNseZLApj8";
 format = "json";
 
@@ -36,16 +37,17 @@ var searchText = new searchText(apiKey,format);
 var parameters = {
         query: "restaurants in Raleigh"
 };
+var places_id = [];
 
 searchText(parameters, function (error, response) {
     if (error) throw error;
     // console.log(response.results);
     var len = response.results.length;
-    var places_id = [];
     for(var i =0; i<len;i++){
         places_id.push(response.results[i].place_id);
     }
     console.log(places_id);
 });
 
+module.exports = places_id;
 // textSearch();
