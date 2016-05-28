@@ -12,7 +12,7 @@
     "express": "~4.13.1",
     "jade": "~1.11.0",
     "merge": "^1.2.0",
-    "mongoose": "^4.4.17",
+    "mongoose": "^4.4.19",
     "morgan": "~1.6.1",
     "serve-favicon": "~2.3.0"
   }
