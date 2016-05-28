@@ -107,7 +107,7 @@ function getDataFromUrl(url){
             array.forEach(function(line){
                 console.log(line);
                 completeString.concat(line);
-            });
+             });
             // for (s in array){
             //     console.log(s);
             //     // completeString+=s;
