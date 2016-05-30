@@ -46,7 +46,7 @@ module.exports = function (parseJson, callback){
 * Using Google places web service(https://developers.google.com/places/web-service/) we can get details about the query string in JSON format.
 The request url is the following: </br>
 https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+Sydney&key=YOUR_API_KEY</br>
-We can pass our value in query string and API KEY to get the response in either JSON or XML format.
+We can pass our value in query string and API KEY to get the response in either JSON or XML format.</br>
 Include the required modules:
 ```javascript
 // includes API_KEY and FORMAT
@@ -149,7 +149,7 @@ getSearchResults(fetchData);
 }
 ```
 #### Place Details: </br>
- Similary we can get the place details by changing our 'options' and the 'parameters'.
+ Similarly we can get the place details by changing our 'options' and the 'parameters'.
 ```javascript
 // create parameters
 var parameters = {
