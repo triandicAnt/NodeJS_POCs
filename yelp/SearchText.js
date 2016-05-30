@@ -33,38 +33,13 @@ function searchText(apiKey, format){
   };
 };
 
-
-
 var searchFunction = new searchText(apiKey,format);
 var parameters = {
         query: "restaurants in Raleigh"
 };
-  var places_id = [];
 
 module.exports = {
-
   initialize: function (callback) {
     searchFunction(parameters,callback);
   }
 };
-
-/*
-    searchFunction(parameters, function (error, response) {
-      // return function(callback){
-        if (error){
-          // callback(error);
-        }
-        // console.log(response.results);
-        var len = response.results.length;
-        for(var i =0; i<len;i++){
-            places_id.push(response.results[i].place_id);
-        }
-        console.log(places_id);
-        // callback(err, places_id);
-      // }
-
-    });
-//   }
-// };
-
-*/
