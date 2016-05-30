@@ -1,4 +1,4 @@
-
+// Find the longitude and latitude of a location
 /*var geocoder = require('geocoder');
 // Geocoding
 geocoder.geocode("3001 B, Kings Court, Raleigh", function ( err, data ) {
@@ -9,14 +9,17 @@ geocoder.geocode("3001 B, Kings Court, Raleigh", function ( err, data ) {
 var querystring = require('querystring');
 var https = require('https');
 var httpmodule = require('./httpModule');
+var apiKey = "AIzaSyDiBagxn8ZbGxxG25JYu8c-THNseZLApj8";
+var format = "json";
+
+var parameters = {
+        key : apiKey,
+        query: "restaurants in Raleigh"
+};
 
 
-apiKey = "AIzaSyDiBagxn8ZbGxxG25JYu8c-THNseZLApj8";
-format = "json";
-
-function searchText(apiKey, format){
-  return function(parameters, callback){
-    parameters.key = apiKey;
+function searchText(format){
+  function searchData(parameters, callback){
     parameters.query = parameters.query || "restaurant";
     if (typeof parameters.location === "object") {
         parameters.location = parameters.location.toString();
@@ -31,12 +34,11 @@ function searchText(apiKey, format){
       });
       request.end();
   };
+  return searchData;
 };
 
-var searchFunction = new searchText(apiKey,format);
-var parameters = {
-        query: "restaurants in Raleigh"
-};
+
+var searchFunction = new searchText(format);
 
 module.exports = {
   initialize: function (callback) {
