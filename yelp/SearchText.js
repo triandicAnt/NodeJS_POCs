@@ -8,7 +8,7 @@ geocoder.geocode("3001 B, Kings Court, Raleigh", function ( err, data ) {
 
 var querystring = require('querystring');
 var https = require('https');
-var module = require('./httpModule');
+var httpmodule = require('./httpModule');
 
 
 apiKey = "AIzaSyDiBagxn8ZbGxxG25JYu8c-THNseZLApj8";
@@ -25,7 +25,7 @@ function searchText(apiKey, format){
       hostname : 'maps.googleapis.com',
       path : '/maps/api/place/textsearch/' + format + '?' + querystring.stringify(parameters)
     }
-    var request = https.request(options, new module(format = 'json',callback));
+    var request = https.request(options, new httpmodule(format = 'json',callback));
     request.on("error", function (error) {
                 callback(new Error(error));
       });
@@ -33,21 +33,38 @@ function searchText(apiKey, format){
   };
 };
 
-var searchText = new searchText(apiKey,format);
+
+
+var searchFunction = new searchText(apiKey,format);
 var parameters = {
         query: "restaurants in Raleigh"
 };
-var places_id = [];
+  var places_id = [];
 
-searchText(parameters, function (error, response) {
-    if (error) throw error;
-    // console.log(response.results);
-    var len = response.results.length;
-    for(var i =0; i<len;i++){
-        places_id.push(response.results[i].place_id);
-    }
-    console.log(places_id);
-});
+module.exports = {
 
-module.exports = places_id;
-// textSearch();
+  initialize: function (callback) {
+    searchFunction(parameters,callback);
+  }
+};
+
+/*
+    searchFunction(parameters, function (error, response) {
+      // return function(callback){
+        if (error){
+          // callback(error);
+        }
+        // console.log(response.results);
+        var len = response.results.length;
+        for(var i =0; i<len;i++){
+            places_id.push(response.results[i].place_id);
+        }
+        console.log(places_id);
+        // callback(err, places_id);
+      // }
+
+    });
+//   }
+// };
+
+*/

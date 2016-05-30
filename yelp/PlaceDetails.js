@@ -32,9 +32,14 @@ function returnParameters(place_id){
   return parameters;
 }
 */
-var places_id = require('./SearchText')
+// var Search = require('./SearchText')
+// var places = new Search(callback);
+// console.log(Search);
 
-// console.log(places_id);
+require('./SearchText').initialize(function (err, data) {
+  console.log(data);
+});
+
 
 /*
 searchText(parameters, function (error, response) {
