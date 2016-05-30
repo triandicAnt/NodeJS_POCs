@@ -14,7 +14,7 @@ module.exports = function (parseJson, callback){
         if(error){
             throw error;
         }
-        if(parseJson){
+        if(parseJson==='json'){
           resData = JSON.parse(resData);
           callback(null,resData);
         }
