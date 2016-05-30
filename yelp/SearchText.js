@@ -5,15 +5,17 @@ geocoder.geocode("3001 B, Kings Court, Raleigh", function ( err, data ) {
   console.log(data.results[0].geometry);
 });
 */
+var auth = require('./Auth');
+
 
 var querystring = require('querystring');
 var https = require('https');
 var httpmodule = require('./httpModule');
-var apiKey = "AIzaSyDiBagxn8ZbGxxG25JYu8c-THNseZLApj8";
-var format = "json";
+// var apiKey = "AIzaSyDiBagxn8ZbGxxG25JYu8c-THNseZLApj8";
+// var format = "json";
 
 var parameters = {
-        key : apiKey,
+        key : auth.API_KEY,
         query: "food, Raleigh"
 };
 
@@ -21,9 +23,6 @@ var parameters = {
 function searchText(format){
   function searchData(parameters, callback){
     parameters.query = parameters.query || "restaurant";
-    if (typeof parameters.location === "object") {
-        parameters.location = parameters.location.toString();
-    }
     var options = {
       hostname : 'maps.googleapis.com',
       path : '/maps/api/place/textsearch/' + format + '?' + querystring.stringify(parameters)
@@ -38,7 +37,7 @@ function searchText(format){
 };
 
 
-var searchFunction = new searchText(format);
+var searchFunction = new searchText(auth.FORMAT);
 
 module.exports = {
   initialize: function (callback) {
