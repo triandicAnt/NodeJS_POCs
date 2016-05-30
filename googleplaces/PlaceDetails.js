@@ -2,70 +2,40 @@ var querystring = require('querystring');
 var https = require('https');
 var httpmodule = require('./httpModule');
 var auth = require('./Auth');
-var SearchText = require('./SearchText');
 
-var places_ids = {};
-function getSearchResults( callback){
-  SearchText.searchText(function (err, data) {
-      if(err){
-        callback(err);
-      }
-      var len = data.results.length;
-      for(var i =0;i<len;i++){
-        places_ids[data.results[i].place_id] = data.results[i].name;
-    }
-    callback(null,places_ids);
-  });
-}
-
-function fetchData(err,data){
-  if(err){
-    console.log(err);
-  }
-  console.log(data);
-}
-function doOtherStuffs(){
-  console.log('completed doing search');
-}
-
-getSearchResults(fetchData);
-doOtherStuffs();
-
+// create parameters
 var parameters = {
         placeid: "ChIJWWSXZUBfrIkR1MhKp1H8zc4",
         key : auth.API_KEY
 };
 
+// this function returns a closure that contains a HTTP request and response data
 function placeDetais(format){
+  // getDetais uses an http request to get response data
   function getDetails(parameters, callback){
     parameters.placeid = parameters.placeid || "ChIJWWSXZUBfrIkR1MhKp1H8zc4";
+    // create options for http request
     var options = {
       hostname : 'maps.googleapis.com',
       path : '/maps/api/place/details/' + format + '?' + querystring.stringify(parameters)
     }
+    // http request with options
     var request = https.request(options, new httpmodule(format = 'json',callback));
     request.on("error", function (error) {
                 callback(new Error(error));
       });
       request.end();
   };
+  // return the closure
   return getDetails;
 };
 
-
+// store the function returned in a variable
 var placeDetailsFunc = new placeDetais(auth.FORMAT);
 
-function printDetails(err, data){
-  if(err){
-    throw err;
-  }
-  console.log(data);
-}
-
+// export it to use in other modules
 module.exports = {
   placeDetail: function (callback) {
     placeDetailsFunc(parameters,callback);
   }
 };
-
-placeDetailsFunc(parameters,printDetails);
