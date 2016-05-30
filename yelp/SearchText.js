@@ -40,7 +40,7 @@ function searchText(format){
 var searchFunction = new searchText(auth.FORMAT);
 
 module.exports = {
-  initialize: function (callback) {
+  searchText: function (callback) {
     searchFunction(parameters,callback);
   }
 };

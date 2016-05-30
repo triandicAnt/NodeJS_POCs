@@ -2,10 +2,11 @@ var querystring = require('querystring');
 var https = require('https');
 var httpmodule = require('./httpModule');
 var auth = require('./Auth');
+var SearchText = require('./SearchText');
 
 var places_ids = {};
 function getSearchResults( callback){
-  require('./SearchText').initialize(function (err, data) {
+  SearchText.searchText(function (err, data) {
       if(err){
         callback(err);
       }
@@ -60,5 +61,11 @@ function printDetails(err, data){
   }
   console.log(data);
 }
+
+module.exports = {
+  placeDetail: function (callback) {
+    placeDetailsFunc(parameters,callback);
+  }
+};
 
 placeDetailsFunc(parameters,printDetails);
