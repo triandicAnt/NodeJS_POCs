@@ -1,6 +1,7 @@
 
 module.exports = function (parseJson, callback){
-  return function(response){
+
+  function httpReqFunc(response){
     var resData = "";
     response.on("error", function(data){
         console.log("Something bad happened");
@@ -19,5 +20,6 @@ module.exports = function (parseJson, callback){
         }
       });
   };
+  return httpReqFunc;
 
 };

@@ -14,7 +14,7 @@ var format = "json";
 
 var parameters = {
         key : apiKey,
-        query: "restaurants in Raleigh"
+        query: "food, Raleigh"
 };
 
 
