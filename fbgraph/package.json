@@ -1,0 +1,60 @@
+{
+  "name": "fbgraph",
+  "version": "1.2.0",
+  "description": "Facebook Graph API client",
+  "keywords": [
+    "facebook",
+    "api",
+    "graph"
+  ],
+  "author": {
+    "name": "Cristiano Oliveira",
+    "email": "ocean.cris@gmail.com"
+  },
+  "main": "index",
+  "dependencies": {
+    "request": "2.72.x",
+    "qs": "1.2.x"
+  },
+  "devDependencies": {
+    "vows": "0.7.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/criso/fbgraph.git"
+  },
+  "engines": {
+    "node": ">= 0.4.1"
+  },
+  "gitHead": "9f9389ace35e261d1d6560becd700245e86ffd9e",
+  "bugs": {
+    "url": "https://github.com/criso/fbgraph/issues"
+  },
+  "homepage": "https://github.com/criso/fbgraph#readme",
+  "_id": "fbgraph@1.2.0",
+  "scripts": {},
+  "_shasum": "59622db23c17d99bbf9bbda9398bdf98c64c3266",
+  "_from": "fbgraph@latest",
+  "_npmVersion": "2.14.12",
+  "_nodeVersion": "4.3.2",
+  "_npmUser": {
+    "name": "criso",
+    "email": "ocean.cris@gmail.com"
+  },
+  "dist": {
+    "shasum": "59622db23c17d99bbf9bbda9398bdf98c64c3266",
+    "tarball": "https://registry.npmjs.org/fbgraph/-/fbgraph-1.2.0.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "criso",
+      "email": "ocean.cris@gmail.com"
+    }
+  ],
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/fbgraph-1.2.0.tgz_1463674453518_0.18258008640259504"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/fbgraph/-/fbgraph-1.2.0.tgz"
+}
