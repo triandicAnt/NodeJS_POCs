@@ -19,7 +19,6 @@ var postKeys = ["uId", "pName","pMessage", "pUrl", "pUpdatedTime", "pCreatedTime
 var userKeys = ["uId", "uName", "uPosts"];
 var imageKeys = ["iId", "iUrl", "submittedBy", "pId"];
 
-
 function getFBData(){
    async.waterfall([
     function(callback){
@@ -67,6 +66,9 @@ function saveData(result){
 		var uId = json.from.id;
 		var uName = json.from.name;
 		
+		var imgIdAndSrcArray = getImageIdAndUrl(json);
+		console.log(imgIdAndSrcArray[0]);
+		
 	});
 	   
 }
@@ -97,8 +99,28 @@ function getPriceAndLoc(msg){
 function getImageIdAndUrl(post){
 	var imgSrcArray = [];
 	var imgIdArray = [];
-	
-// 	var 
+	if(typeof post.attachments!= 'undefined'){
+		if(typeof post.attachments.data[0].subattachments != 'undefined'){
+			var submedia = post.attachments.data[0].subattachments.data;
+			submedia.forEach(function(img){
+				imgSrcArray.push(img.media.image.src);
+				imgIdArray.push(img.target.id);
+			});
+			return [imgIdArray, imgSrcArray];
+		}
+		else if(typeof post.attachments != 'undefined'){
+			if( typeof post.attachments.data[0].media != 'undefined'){
+				var postData = post.attachments.data[0];
+					imgSrcArray.push(postData.media.image.src);
+					imgIdArray.push(postData.target.id);
+				if(typeof imgIdArray[0] == 'undefined'){
+					imgIdArray[0] = new Date().getTime();
+				}
+			}
+			return [imgIdArray, imgSrcArray];
+		}
+	} 
+	return [imgIdArray, imgSrcArray];
 }
 
 getFBData();
