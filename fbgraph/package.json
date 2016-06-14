@@ -13,8 +13,9 @@
   },
   "main": "index",
   "dependencies": {
-    "request": "2.72.x",
-    "qs": "1.2.x"
+    "firebase": "^3.0.4",
+    "qs": "1.2.x",
+    "request": "2.72.x"
   },
   "devDependencies": {
     "vows": "0.7.x"
