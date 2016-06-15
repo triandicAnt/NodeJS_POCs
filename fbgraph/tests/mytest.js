@@ -1,9 +1,21 @@
 var graph    = require("../index")
   , FBConfig = require("./config").facebook
-  , FireConfig = require("./config").firebase;
+  , FireConfig = require("./config").fbase;
 
 var async = require('async');
-var Firebase = require("firebase");
+var firebase = require('firebase');
+
+firebase.initializeApp({
+serviceAccount: {
+    projectId:   FireConfig.projectId,
+    clientEmail: FireConfig.clientEmail,
+    privateKey:  FireConfig.privateKey
+  },
+  databaseURL: FireConfig.kDBBaseRef
+});
+
+var db = firebase.database();
+
 
 graph.setAppSecret(FBConfig.appSecret)
 graph.setAccessToken(FBConfig.accessToken)
@@ -53,10 +65,12 @@ function saveData(result){
 	userResults = result[1];
 	postResults.forEach(function(json){
 		var post = {};
-		var postValue = {};
+		var postValue = [];
 		
 		var pId = json.id;
+		var pName = json.name;
 		var pMessage = json.message;
+		var pUrl = json.link;
 		var pCreatedTime = Date.parse(json.created_time)/1000;
 		var pUpdatedTime = Date.parse(json.updated_time)/1000;
 		var priceAndLoc = getPriceAndLoc(pMessage);
@@ -67,10 +81,34 @@ function saveData(result){
 		var uName = json.from.name;
 		
 		var imgIdAndSrcArray = getImageIdAndUrl(json);
-		console.log(imgIdAndSrcArray[0]);
 		
+		var pImages = {};
+		imgIdAndSrcArray[0].forEach(function (imgId){
+			pImages[imgId] = true;
+		});
+		
+		postValue.push(uId);
+		postValue.push(pName);
+		postValue.push(pMessage);
+		postValue.push(pUrl);
+		postValue.push(pUpdatedTime);
+		postValue.push(pCreatedTime);
+		postValue.push(pPrice);
+		postValue.push(pLoc);
+		postValue.push(pImages);
+		
+		for(var i=0; i<postKeys.length;i++){
+			if(typeof postValue[i] == 'undefined'){
+				post[postKeys[i]] = '';
+			}
+			else{
+				post[postKeys[i]] = postValue[i];
+			}
+		}
+		postDict[pId] = post;
+// 		console.log(post);	
 	});
-	   
+	saveToDatabaseWithRef(FireConfig.kDBPostRef,postDict);   
 }
 
 function getPriceAndLoc(msg){
@@ -122,5 +160,24 @@ function getImageIdAndUrl(post){
 	} 
 	return [imgIdArray, imgSrcArray];
 }
+
+var onComplete = function(error) {
+  if (error) {
+    console.log('Synchronization failed');
+  } else {
+    console.log('Synchronization succeeded');
+    process.exit();
+  }
+};
+function saveToDatabaseWithRef(childRef, data){
+// 	var ref = new Firebase(FireConfig.kDBBaseRef);
+// 	var postRef = ref.child(childRef);
+	var postRef = db.ref("/posts");
+
+	postRef.update(data,onComplete);
+
+}
+
+
 
 getFBData();
