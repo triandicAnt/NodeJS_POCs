@@ -25,11 +25,11 @@ var postResults = [];
 var userResults = [];
 var postDict = {};
 var imageDict = {};
-var userDict = {};
+var userArray = [];
 
 var postKeys = ["uId", "pName","pMessage", "pUrl", "pUpdatedTime", "pCreatedTime", "pPrice", "pLocation", "pImages"];
-var userKeys = ["uId", "uName", "uPosts"];
-var imageKeys = ["iId", "iUrl", "submittedBy", "pId"];
+var userKeys = ["uId", "uName", "uPost", "uImg"];
+var imageKeys = ["iUrl", "submittedBy", "pId"];
 
 function getFBData(){
    async.waterfall([
@@ -81,13 +81,22 @@ function saveData(result){
 		var uName = json.from.name;
 		
 		var imgIdAndSrcArray = getImageIdAndUrl(json);
-		
+		var imgSrcArray = imgIdAndSrcArray[1];
 		var pImages = {};
 		imgIdAndSrcArray[0].forEach(function (imgId){
 			pImages[imgId] = true;
+			count = count+1;
 		});
-		
-		postValue.push(uId);
+		var users = {};
+		var userValues = [];
+		userValues.push(uId);
+		userValues.push(uName);
+		userValues.push(pId);
+		userValues.push(userResults[uId].data.url);
+		for(var i=0; i<userKeys.length;i++){
+			users[userKeys[i]] = userValues[i];
+		}	
+		postValue.push(users);
 		postValue.push(pName);
 		postValue.push(pMessage);
 		postValue.push(pUrl);
@@ -106,9 +115,67 @@ function saveData(result){
 			}
 		}
 		postDict[pId] = post;
-// 		console.log(post);	
+
+		// creating user records
+		/*var users = {};
+		var userValues = [];
+		userValues.push(uId);
+		userValues.push(uName);
+		userValues.push(pId);
+		userValues.push(userResults[uId].data.url);
+		for(var i=0; i<userKeys.length;i++){
+			users[userKeys[i]] = userValues[i];
+		}	
+		userArray.push(users);
+		*/
+		// creating image record
+// 		for(var i=0; i<imgIdAndSrcArray[0].length;i++){
+
+		var c = 0;
+		imgIdAndSrcArray[0].forEach(function (imgId){
+			var image = {};
+			var imageValue = [];
+// 			imageValue.push(imgId);
+			imageValue.push(imgSrcArray[c]);
+			imageValue.push(uId);
+			imageValue.push(pId);
+			for(var i=0; i<imageKeys.length;i++){
+				image[imageKeys[i]] = imageValue[i];
+			}
+			c = c+1;
+			count1 = count1 +1;
+			imageDict[imgId] = image;
+		});
+		
 	});
-	saveToDatabaseWithRef(FireConfig.kDBPostRef,postDict);   
+	
+	// saving data to firebase
+	
+	async.series
+    ([  
+        function (callback)
+        {
+        	saveToDatabaseWithRef(FireConfig.kDBPostRef,postDict);   
+            callback();
+        }
+        ,
+        function (callback)
+        {
+        	saveToDatabaseWithRef(FireConfig.kDBImageRef,imageDict);   
+            callback();
+        }
+       /* ,
+        function (callback)
+        {
+        	saveUserAndImages(FireConfig.kDBImageRef,imageArray);
+            callback();
+        }*/
+    ]
+    ,
+    function(err) 
+    {
+        console.log("Done !");
+    });
 }
 
 function getPriceAndLoc(msg){
@@ -170,14 +237,19 @@ var onComplete = function(error) {
   }
 };
 function saveToDatabaseWithRef(childRef, data){
-// 	var ref = new Firebase(FireConfig.kDBBaseRef);
-// 	var postRef = ref.child(childRef);
-	var postRef = db.ref("/posts");
-
-	postRef.update(data,onComplete);
+	var postRef = db.ref(childRef);
+	postRef.update(data);
+// 	postRef.update(data,onComplete);
 
 }
 
+function saveUserAndImages(childRef, data){
+	var postRef = db.ref(childRef);
+	data.forEach(function (value){
+		postRef.push().set(value);
+	});
+// 	postRef.push().update(data,onComplete);
+}
 
 
 getFBData();
