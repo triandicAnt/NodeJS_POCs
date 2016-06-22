@@ -68,15 +68,15 @@ function saveData(result){
 		var postValue = [];
 		
 		var pId = json.id;
-		var pName = json.name;
-		var pMessage = json.message;
+// 		var pName = json.name;
 		var pUrl = json.link;
+		var pMessage = json.message;
 		var pCreatedTime = Date.parse(json.created_time)/1000;
 		var pUpdatedTime = Date.parse(json.updated_time)/1000;
-		var priceAndLoc = getPriceAndLoc(pMessage);
-		var pPrice = priceAndLoc[0];
-		var pLoc = priceAndLoc[1];
-		
+		var priceAndLoc = getPriceAndLocAndName(pMessage);
+		var pPrice = priceAndLoc[1];
+		var pLoc = priceAndLoc[2];
+		var pName = priceAndLoc[0];
 		var uId = json.from.id;
 		var uName = json.from.name;
 		
@@ -85,7 +85,6 @@ function saveData(result){
 		var pImages = {};
 		imgIdAndSrcArray[0].forEach(function (imgId){
 			pImages[imgId] = true;
-			count = count+1;
 		});
 		var users = {};
 		var userValues = [];
@@ -143,7 +142,6 @@ function saveData(result){
 				image[imageKeys[i]] = imageValue[i];
 			}
 			c = c+1;
-			count1 = count1 +1;
 			imageDict[imgId] = image;
 		});
 		
@@ -178,7 +176,7 @@ function saveData(result){
     });
 }
 
-function getPriceAndLoc(msg){
+function getPriceAndLocAndName(msg){
 	var price = 0;
 	var loc = "";
 	var msgArray = msg.split("\n");
@@ -198,7 +196,7 @@ function getPriceAndLoc(msg){
 			}
 		}
 	}
-	return [price, loc];
+	return [msgArray[0], price, loc];
 }
 
 function getImageIdAndUrl(post){
@@ -252,4 +250,15 @@ function saveUserAndImages(childRef, data){
 }
 
 
+// reading data from database
+function readDataFromChild(childRef){
+	var ref = db.ref(childRef);
+	ref.on("value", function(snapshot) {
+  		console.log(snapshot.val());
+	}, function (errorObject) {
+  	console.log("The read failed: " + errorObject.code);
+	});
+}
+
 getFBData();
+// readDataFromChild(FireConfig.kDBImageRef);
