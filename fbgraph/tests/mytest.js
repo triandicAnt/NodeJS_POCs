@@ -32,9 +32,13 @@ var userKeys = ["uId", "uName", "uPost", "uImg"];
 var imageKeys = ["iUrl", "submittedBy", "pId"];
 
 function getFBData(){
+	
    async.waterfall([
     function(callback){
     	graph.get(FBConfig.groupUrl, function(err, res) {
+    			if(err != null){
+    				saveLogs(FireConfig.kDBLogRef,createLog(err));
+    			}
   				callback(null, res.data);
 		});
     },
@@ -48,6 +52,9 @@ function getFBData(){
 		str = str.substring(1,str.length);
 		var url = "picture?ids=" +str+ "&redirect=false&type=large";
 		graph.get(url, function(err, res) {
+			if(err != null){
+    			saveLogs(FireConfig.kDBLogRef,createLog(err));
+    		}
 			var results = [];
 			results.push(arg1);
 			results.push(res);
@@ -55,10 +62,20 @@ function getFBData(){
 		});
     }
   ], function (err, result) {
-	saveData(result);
+  		if(err != null){
+    		saveLogs(FireConfig.kDBLogRef,createLog(err));
+    	}
+		saveData(result);
   });
 }
 
+function createLog(msg){
+	var startTime = firebase.database.ServerValue.TIMESTAMP;
+	log = {};
+	log['msg'] = msg;
+	log['time'] = startTime;
+	return log;
+}
 
 function saveData(result){
 	postResults = result[0];
@@ -172,6 +189,10 @@ function saveData(result){
     ,
     function(err) 
     {
+    	if(err != null){
+    		saveLogs(FireConfig.kDBLogRef,createLog(err));
+    	}
+		saveLogs(FireConfig.kDBLogRef,createLog('saving data'));
         console.log("Done !");
     });
 }
@@ -179,24 +200,28 @@ function saveData(result){
 function getPriceAndLocAndName(msg){
 	var price = 0;
 	var loc = "";
-	var msgArray = msg.split("\n");
-	if(msgArray.length>2){
-		var priceAndLocArray = msgArray[1].split("-");
-		if(priceAndLocArray.length>1){
-			if(priceAndLocArray[0].trim().toUpperCase()=="FREE"){
-				price = -1;
-			}
-			else if(priceAndLocArray[0].trim().length >0){
-				var str = priceAndLocArray[0].trim();
-				var p = str.replace( /^\D+/g, '');
-				price = parseInt(p.match(/\d+/)[0])
-			}
-			if(priceAndLocArray[1].length>0){
-				loc = priceAndLocArray[1].trim();
+	var name = "";
+	if(typeof msg != 'undefined'){
+		var msgArray = msg.split("\n");
+		name = msgArray[0];
+		if(msgArray.length>2){
+			var priceAndLocArray = msgArray[1].split("-");
+			if(priceAndLocArray.length>1){
+				if(priceAndLocArray[0].trim().toUpperCase()=="FREE"){
+					price = -1;
+				}
+				else if(priceAndLocArray[0].trim().length >0){
+					var str = priceAndLocArray[0].trim();
+					var p = str.replace( /^\D+/g, '');
+					price = parseInt(p.match(/\d+/)[0])
+				}
+				if(priceAndLocArray[1].length>0){
+					loc = priceAndLocArray[1].trim();
+				}
 			}
 		}
 	}
-	return [msgArray[0], price, loc];
+	return [name, price, loc];
 }
 
 function getImageIdAndUrl(post){
@@ -228,7 +253,9 @@ function getImageIdAndUrl(post){
 
 var onComplete = function(error) {
   if (error) {
-    console.log('Synchronization failed');
+    if(error != null){
+    		saveLogs(FireConfig.kDBLogRef,createLog(error));
+    	}
   } else {
     console.log('Synchronization succeeded');
     process.exit();
@@ -241,11 +268,11 @@ function saveToDatabaseWithRef(childRef, data){
 
 }
 
-function saveUserAndImages(childRef, data){
+function saveLogs(childRef, data){
 	var postRef = db.ref(childRef);
-	data.forEach(function (value){
-		postRef.push().set(value);
-	});
+// 	data.forEach(function (value){
+		postRef.push().set(data);
+// 	});
 // 	postRef.push().update(data,onComplete);
 }
 
