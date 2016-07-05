@@ -1,0 +1,14 @@
+{
+  "name": "youtube",
+  "version": "1.0.0",
+  "description": "fetch data from youtube",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sudhansu Singh",
+  "license": "MIT",
+  "dependencies": {
+    "youtube-api": "^2.0.2"
+  }
+}
