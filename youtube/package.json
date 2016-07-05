@@ -9,6 +9,7 @@
   "author": "Sudhansu Singh",
   "license": "MIT",
   "dependencies": {
-    "youtube-api": "^2.0.2"
+    "youtube-api": "^2.0.2",
+    "bluebird": "3.2.2"
   }
 }

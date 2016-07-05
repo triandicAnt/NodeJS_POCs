@@ -1,7 +1,7 @@
-var Youtube = require("youtube-api")
-  , FBConfig = require("./config").facebook
+var youtubeAPI = require("youtube-api")
+  , YConfig = require("./config").youtube
   , FireConfig = require("./config").fbase;
-
+  
 var async = require('async');
 var firebase = require('firebase');
 
@@ -17,55 +17,41 @@ serviceAccount: {
 var db = firebase.database();
 
 
-graph.setAppSecret(FBConfig.appSecret)
-graph.setAccessToken(FBConfig.accessToken)
-graph.setVersion("2.6");
-
 var postResults = [];
 var userResults = [];
 var postDict = {};
 var imageDict = {};
 var userArray = [];
 
-var postKeys = ["uId", "pName","pMessage", "pUrl", "pUpdatedTime", "pCreatedTime", "pPrice", "pLocation", "pImages"];
-var userKeys = ["uId", "uName", "uPost", "uImg"];
-var imageKeys = ["iUrl", "submittedBy", "pId"];
+var postKeys = ["id", "title","url", "thumbnail", "createdDate"];
+	console.log(YConfig.API);
 
-function getFBData(){
+var Youtube = {
+    _APIKEY: YConfig.API,
+      setup: function (apiKEY) {
+        this._APIKEY = apiKEY;
+        youtubeAPI.authenticate({
+            type: 'key',
+            key: apiKEY
+        });
+    },
+    searchFunctions: require('./lib/search-functions'),
+};
 
+function getYoutubeData(){
    async.waterfall([
-    function(callback){
-    	graph.get(FBConfig.groupUrl, function(err, res) {
-    			if(err != null){
-    				saveLogs(FireConfig.kDBLogRef,createLog(err));
-    			}
-  				callback(null, res.data);
+    	function(callback){
+    		Youtube.searchFunctions.simpleSearch('trailers').then(function (data) {
+    		console.log(data);
+    		callback(null, data);
 		});
     },
     function(arg1, callback){
-    	var userIds = [];
-    	var str = "";
-        arg1.forEach(function(value){
-  				userIds.push(value.from.id);
-  				str += "," + value.from.id;
-		});
-		str = str.substring(1,str.length);
-		var url = "picture?ids=" +str+ "&redirect=false&type=large";
-		graph.get(url, function(err, res) {
-			if(err != null){
-    			saveLogs(FireConfig.kDBLogRef,createLog(err));
-    		}
-			var results = [];
-			results.push(arg1);
-			results.push(res);
-			callback(null,results);
-		});
+		callback(null,arg1);
     }
   ], function (err, result) {
   		if(err != null){
-    		saveLogs(FireConfig.kDBLogRef,createLog(err));
     	}
-		saveData(result);
   });
 }
 
@@ -76,7 +62,7 @@ function createLog(msg){
 	log['time'] = startTime;
 	return log;
 }
-
+/*
 function saveData(result){
 	postResults = result[0];
 	userResults = result[1];
@@ -147,7 +133,7 @@ function saveData(result){
 		// creating image record
 // 		for(var i=0; i<imgIdAndSrcArray[0].length;i++){
 
-		var c = 0;
+/*		var c = 0;
 		imgIdAndSrcArray[0].forEach(function (imgId){
 			var image = {};
 			var imageValue = [];
@@ -163,9 +149,9 @@ function saveData(result){
 		});
 
 	});
-
+*/
 	// saving data to firebase
-
+/*
 	async.series
     ([
         function (callback)
@@ -179,12 +165,12 @@ function saveData(result){
         	saveToDatabaseWithRef(FireConfig.kDBImageRef,imageDict);
             callback();
         }
-       /* ,
+        ,
         function (callback)
         {
         	saveUserAndImages(FireConfig.kDBImageRef,imageArray);
             callback();
-        }*/
+        }
     ]
     ,
     function(err)
@@ -197,60 +183,7 @@ function saveData(result){
     });
 }
 
-function getPriceAndLocAndName(msg){
-	var price = 0;
-	var loc = "";
-	var name = "";
-	if(typeof msg != 'undefined'){
-		var msgArray = msg.split("\n");
-		name = msgArray[0];
-		if(msgArray.length>2){
-			var priceAndLocArray = msgArray[1].split("-");
-			if(priceAndLocArray.length>1){
-				if(priceAndLocArray[0].trim().toUpperCase()=="FREE"){
-					price = -1;
-				}
-				else if(priceAndLocArray[0].trim().length >0){
-					var str = priceAndLocArray[0].trim();
-					var p = str.replace( /^\D+/g, '');
-					price = parseInt(p.match(/\d+/)[0])
-				}
-				if(priceAndLocArray[1].length>0){
-					loc = priceAndLocArray[1].trim();
-				}
-			}
-		}
-	}
-	return [name, price, loc];
-}
-
-function getImageIdAndUrl(post){
-	var imgSrcArray = [];
-	var imgIdArray = [];
-	if(typeof post.attachments!= 'undefined'){
-		if(typeof post.attachments.data[0].subattachments != 'undefined'){
-			var submedia = post.attachments.data[0].subattachments.data;
-			submedia.forEach(function(img){
-				imgSrcArray.push(img.media.image.src);
-				imgIdArray.push(img.target.id);
-			});
-			return [imgIdArray, imgSrcArray];
-		}
-		else if(typeof post.attachments != 'undefined'){
-			if( typeof post.attachments.data[0].media != 'undefined'){
-				var postData = post.attachments.data[0];
-					imgSrcArray.push(postData.media.image.src);
-					imgIdArray.push(postData.target.id);
-				if(typeof imgIdArray[0] == 'undefined'){
-					imgIdArray[0] = new Date().getTime();
-				}
-			}
-			return [imgIdArray, imgSrcArray];
-		}
-	}
-	return [imgIdArray, imgSrcArray];
-}
-
+*/
 var onComplete = function(error) {
   if (error) {
     if(error != null){
@@ -278,14 +211,13 @@ function saveLogs(childRef, data){
 
 
 // reading data from database
-function readDataFromChild(childRef){
-	var ref = db.ref(childRef);
-	ref.on("value", function(snapshot) {
-  		console.log(snapshot.val());
-	}, function (errorObject) {
-  	console.log("The read failed: " + errorObject.code);
-	});
-}
+// function readDataFromChild(childRef){
+// 	var ref = db.ref(childRef);
+// 	ref.on("value", function(snapshot) {
+//   		console.log(snapshot.val());
+// 	}, function (errorObject) {
+//   	console.log("The read failed: " + errorObject.code);
+// 	});
+// }
 
-getFBData();
-// readDataFromChild(FireConfig.kDBImageRef);
+getYoutubeData();
