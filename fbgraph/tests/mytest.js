@@ -27,12 +27,12 @@ var postDict = {};
 var imageDict = {};
 var userArray = [];
 
-var postKeys = ["uId", "pName","pMessage", "pUrl", "pUpdatedTime", "pCreatedTime", "pPrice", "pLocation", "pImages"];
+var postKeys = ["uId", "pName","pMessage", "pUrl", "pUpdatedTime", "pCreatedTime", "pPrice", "pLocation", "pImages", "pImgDef"];
 var userKeys = ["uId", "uName", "uPost", "uImg"];
 var imageKeys = ["iUrl", "submittedBy", "pId"];
 
 function getFBData(){
-	
+
    async.waterfall([
     function(callback){
     	graph.get(FBConfig.groupUrl, function(err, res) {
@@ -83,7 +83,7 @@ function saveData(result){
 	postResults.forEach(function(json){
 		var post = {};
 		var postValue = [];
-		
+
 		var pId = json.id;
 // 		var pName = json.name;
 		var pUrl = json.link;
@@ -96,7 +96,7 @@ function saveData(result){
 		var pName = priceAndLoc[0];
 		var uId = json.from.id;
 		var uName = json.from.name;
-		
+
 		var imgIdAndSrcArray = getImageIdAndUrl(json);
 		var imgSrcArray = imgIdAndSrcArray[1];
 		var pImages = {};
@@ -111,7 +111,7 @@ function saveData(result){
 		userValues.push(userResults[uId].data.url);
 		for(var i=0; i<userKeys.length;i++){
 			users[userKeys[i]] = userValues[i];
-		}	
+		}
 		postValue.push(users);
 		postValue.push(pName);
 		postValue.push(pMessage);
@@ -121,7 +121,8 @@ function saveData(result){
 		postValue.push(pPrice);
 		postValue.push(pLoc);
 		postValue.push(pImages);
-		
+    postValue.push(typeof imgSrcArray[0] == 'undefined'? '':imgSrcArray[0]);
+
 		for(var i=0; i<postKeys.length;i++){
 			if(typeof postValue[i] == 'undefined'){
 				post[postKeys[i]] = '';
@@ -141,7 +142,7 @@ function saveData(result){
 		userValues.push(userResults[uId].data.url);
 		for(var i=0; i<userKeys.length;i++){
 			users[userKeys[i]] = userValues[i];
-		}	
+		}
 		userArray.push(users);
 		*/
 		// creating image record
@@ -161,22 +162,22 @@ function saveData(result){
 			c = c+1;
 			imageDict[imgId] = image;
 		});
-		
+
 	});
-	
+
 	// saving data to firebase
-	
+
 	async.series
-    ([  
+    ([
         function (callback)
         {
-        	saveToDatabaseWithRef(FireConfig.kDBPostRef,postDict);   
+        	saveToDatabaseWithRef(FireConfig.kDBPostRef,postDict);
             callback();
         }
         ,
         function (callback)
         {
-        	saveToDatabaseWithRef(FireConfig.kDBImageRef,imageDict);   
+        	saveToDatabaseWithRef(FireConfig.kDBImageRef,imageDict);
             callback();
         }
        /* ,
@@ -187,7 +188,7 @@ function saveData(result){
         }*/
     ]
     ,
-    function(err) 
+    function(err)
     {
     	if(err != null){
     		saveLogs(FireConfig.kDBLogRef,createLog(err));
@@ -213,7 +214,7 @@ function getPriceAndLocAndName(msg){
 				else if(priceAndLocArray[0].trim().length >0){
 					var str = priceAndLocArray[0].trim();
 					var p = str.replace( /^\D+/g, '');
-					price = parseInt(p.match(/\d+/)[0])
+					price = parseInt(p.match(/\d+/)==null?0:p.match(/\d+/)[0])
 				}
 				if(priceAndLocArray[1].length>0){
 					loc = priceAndLocArray[1].trim();
@@ -247,7 +248,7 @@ function getImageIdAndUrl(post){
 			}
 			return [imgIdArray, imgSrcArray];
 		}
-	} 
+	}
 	return [imgIdArray, imgSrcArray];
 }
 
