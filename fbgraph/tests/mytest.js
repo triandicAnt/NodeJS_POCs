@@ -27,9 +27,11 @@ var postDict = {};
 var imageDict = {};
 var userArray = [];
 
-var postKeys = ["uId", "pName","pMessage", "pUrl", "pUpdatedTime", "pCreatedTime", "pPrice", "pLocation", "pImages", "pImgDef"];
+var postKeys = ["uId", "pName","pMessage", "pUrl", "pUpdatedTime", "pCreatedTime", "pPrice", "pLocation", "pImages", "pImgDef","lastBidder","lastAmount","bids", "pOrder"];
 var userKeys = ["uId", "uName", "uPost", "uImg"];
 var imageKeys = ["iUrl", "submittedBy", "pId"];
+
+var currentTime = Math.floor(Date.now() / 1000);
 
 function getFBData(){
 
@@ -121,8 +123,12 @@ function saveData(result){
 		postValue.push(pPrice);
 		postValue.push(pLoc);
 		postValue.push(pImages);
-    postValue.push(typeof imgSrcArray[0] == 'undefined'? '':imgSrcArray[0]);
+    	postValue.push(typeof imgSrcArray[0] == 'undefined'? '':imgSrcArray[0]);
+    	postValue.push("");
+    	postValue.push("");
+    	postValue.push(null);
 
+		postValue.push(currentTime-pCreatedTime);
 		for(var i=0; i<postKeys.length;i++){
 			if(typeof postValue[i] == 'undefined'){
 				post[postKeys[i]] = '';
