@@ -4,6 +4,9 @@ var graph    = require("../index")
 
 var async = require('async');
 var firebase = require('firebase');
+// cron variable to schedule the data fetch and inserting to firebase:
+// time interval :- 1 min for testing purposes
+var CronJob = require('cron').CronJob; 
 
 firebase.initializeApp({
 serviceAccount: {
@@ -294,5 +297,27 @@ function readDataFromChild(childRef){
 	});
 }
 
-getFBData();
+//getFBData();
+
+// call cron function and fetch the data every 1 minute
+/*
+5 * * * * *' - runs every 5 seconds
+'10,20,30 * * * * *' - run at 10th, 20th and 30th second of every minute
+'0 * * * * *' - runs every minute
+'0 0 * * * *' - runs every hour (at 0 minutes and 0 seconds)
+*/
+
+var job = new CronJob('2 * * * * *', function() {
+  /*
+   * Runs every two minutes
+   */
+   getFBData();
+  }, function () {
+    /* This function is executed when the job stops */
+    saveLogs(FireConfig.kDBLogRef,"An internal error has occured.");
+    
+  },
+  true /* Start the job right now */
+  //timeZone /* Time zone of this job. */
+);
 // readDataFromChild(FireConfig.kDBImageRef);
