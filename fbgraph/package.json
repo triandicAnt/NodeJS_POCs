@@ -13,6 +13,7 @@
   },
   "main": "index",
   "dependencies": {
+    "cron": "^1.1.0",
     "firebase": "^3.0.4",
     "qs": "1.2.x",
     "request": "2.72.x"
