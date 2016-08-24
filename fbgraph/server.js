@@ -8,13 +8,13 @@ var firebase = require('firebase');
 // time interval :- 1 min for testing purposes
 var CronJob = require('cron').CronJob; 
 
-http.createServer(function(request, response) {
-  response.writeHead(200, {"Content-Type": "text/plain"});
-  response.write("Hello from the outside!!!");
-  response.end();
-
-  console.log("Hello from the outside!");
-}).listen(process.env.PORT || 8888);
+// http.createServer(function(request, response) {
+//   response.writeHead(200, {"Content-Type": "text/plain"});
+//   response.write("Hello from the outside!!!");
+//   response.end();
+// 
+//   console.log("Hello from the outside!");
+// }).listen(process.env.PORT || 8888);
 
 
 firebase.initializeApp({
@@ -316,17 +316,77 @@ function readDataFromChild(childRef){
 '0 0 * * * *' - runs every hour (at 0 minutes and 0 seconds)
 */
 
-var job = new CronJob('2 * * * * *', function() {
-  /*
-   * Runs every two minutes
-   */
-   getFBData();
-  }, function () {
-    /* This function is executed when the job stops */
-    saveLogs(FireConfig.kDBLogRef,"An internal error has occured.");
-    
-  },
-  true /* Start the job right now */
-  //timeZone /* Time zone of this job. */
-);
+// var job = new CronJob('2 * * * * *', function() {
+//   /*
+//    * Runs every two minutes
+//    */
+//    getFBData();
+//   }, function () {
+//     /* This function is executed when the job stops */
+//     saveLogs(FireConfig.kDBLogRef,"An internal error has occured.");
+//     
+//   },
+//   true /* Start the job right now */
+//   //timeZone /* Time zone of this job. */
+// );
 // readDataFromChild(FireConfig.kDBImageRef);
+
+
+// notification changes
+var request = require('request');
+
+var API_KEY = FireConfig.serverKey; 
+
+
+ref = firebase.database().ref();
+
+function listenForNotificationRequests() {
+	//var requests = db.ref('/notifications');
+	var requests = ref.child('notifications');
+	// Change the on property to child_added
+  requests.on('child_added', function(requestSnapshot) {
+    var user = requestSnapshot.val();
+    for(var i=0; i<user.id.length;i++){
+			
+    		sendNotificationToUser(
+      			user.id[i], 
+      			"You have been outbid!",
+      				function() {
+        			user.ref().remove();
+      			}
+    		); 
+		} 
+    
+  }, function(error) {
+    console.error(error);
+  });
+};
+
+function sendNotificationToUser(userId, message, onSuccess) {
+	console.log("called");
+  request({
+    url: 'https://fcm.googleapis.com/fcm/send',
+    method: 'POST',
+    headers: {
+      'Content-Type' :' application/json',
+      'Authorization': 'key='+API_KEY
+    },
+    body: JSON.stringify({
+      notification: {
+        title: message
+      },
+      to : '/topics/user_'+userId
+    })
+  }, function(error, response, body) {
+    if (error) { console.error(error); }
+    else if (response.statusCode >= 400) { 
+      console.error('HTTP Error: '+response.statusCode+' - '+response.statusMessage); 
+    }
+    else {
+      onSuccess();
+    }
+  });
+}
+
+// start listening
+listenForNotificationRequests();
