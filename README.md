@@ -1,4 +1,4 @@
-# soMEAN
+# POCs in Node js
 
 ### fbgraph: 
 * Using FB Graph API get data of Group and users and save it to Google Firebase.
