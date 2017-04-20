@@ -2,7 +2,7 @@ var youtubeAPI = require('youtube-api');
 
 var Youtube = {
 
-    _APIKEY: 'AIzaSyBFmMODzS-d-ksUzCOYm-1fIpkf5KAwkoM',
+    _APIKEY: '***API Key***',
       setup: function (apiKEY) {
         this._APIKEY = apiKEY;
         youtubeAPI.authenticate({
