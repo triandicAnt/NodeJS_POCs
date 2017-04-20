@@ -2,8 +2,8 @@
 ### Contents:
 * [Facebook Graph API](#fbgraph)  
 * [Google Places API](#googleplaces)
-* [Yelp API](#fbgraph)
-* [YouTube API](#googleplaces)
+* [Yelp API](#yelp)
+* [YouTube API](#youtube)
 
 
 <a name="fbgraph"></a>
