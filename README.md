@@ -1,9 +1,9 @@
 # POCs in Node js
 ### Contents:
-[Facebook Graph API](#fbgraph)  
-[Google Places API](#googleplaces) 
-[Yelp API](#fbgraph)  
-[YouTube API](#googleplaces)
+* [Facebook Graph API](#fbgraph)  
+* [Google Places API](#googleplaces)
+* [Yelp API](#fbgraph)
+* [YouTube API](#googleplaces)
 
 
 <a name="fbgraph"></a>
