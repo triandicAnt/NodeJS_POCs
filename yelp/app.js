@@ -20,10 +20,10 @@ var Business = mongoose.model('Business');
 require("yelp")
 var Yelp = require('yelp');
 var yelp = new Yelp({
- consumer_key: 'rUpTzr4ffrUp3zSHeX9yFQ',
-  consumer_secret: 'p83Ea7afNax63n2pC6j33dUw34Y',
-  token: 'eEeXhE6noM20VnLJ4tc3NlwW_tWdEtNr',
-  token_secret: 'p4NOLqXsjgN7IYJ25sEvR52pLso',
+ consumer_key: '',
+  consumer_secret: '',
+  token: '',
+  token_secret: '',
 });
 
 yelp.search({ term: 'food', location: 'Montreal' })
